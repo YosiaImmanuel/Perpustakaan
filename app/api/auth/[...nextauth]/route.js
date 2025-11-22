@@ -18,17 +18,17 @@ export const authOptions = {
         );
 
         const user = rows[0];
-        if (!user) throw new Error("User not found");
+        if (!user) return null;
 
         const isValid = await compare(credentials.password, user.password);
-        if (!isValid) throw new Error("Invalid password");
+        if (!isValid) return null;
 
         return {
           id: user.id,
           name: user.name,
           email: user.email,
           role: user.role,
-          address: user.address, // ⬅ Tambahkan Address di sini
+          address: user.address,
         };
       },
     }),
@@ -41,7 +41,7 @@ export const authOptions = {
         token.name = user.name;
         token.email = user.email;
         token.role = user.role;
-        token.address = user.address; // ⬅ Tambahkan di JWT
+        token.address = user.address;
       }
       return token;
     },
@@ -52,7 +52,7 @@ export const authOptions = {
         name: token.name,
         email: token.email,
         role: token.role,
-        address: token.address, // ⬅ Tambahkan di Session
+        address: token.address,
       };
       return session;
     },

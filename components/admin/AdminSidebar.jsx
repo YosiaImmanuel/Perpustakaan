@@ -21,7 +21,6 @@ export default function AdminSidebar({ openSidebar, setOpenSidebar }) {
 
     setIsLoggingOut(true);
 
-    // animation delay sedikit
     setTimeout(async () => {
       await signOut({ redirect: false });
       router.push("/");
@@ -52,7 +51,7 @@ export default function AdminSidebar({ openSidebar, setOpenSidebar }) {
                 key={item.path}
                 onClick={() => {
                   router.push(item.path);
-                  setOpenSidebar(false);
+                  setOpenSidebar(false); // <— aman sekarang
                 }}
                 className={`flex items-center w-full px-4 py-2 rounded-lg font-medium transition
                   ${
@@ -77,9 +76,7 @@ export default function AdminSidebar({ openSidebar, setOpenSidebar }) {
               ${isLoggingOut ? "opacity-50 pointer-events-none" : ""}
             `}
           >
-            {/* Ripple animation */}
             <span className="absolute inset-0 bg-red-200 opacity-0 hover:opacity-20 transition-opacity"></span>
-
             <span className="mr-3 text-lg">🚪</span>
             {isLoggingOut ? "Logging out..." : "Logout"}
           </button>

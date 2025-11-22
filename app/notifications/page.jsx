@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { FiBell, FiCheckCircle } from "react-icons/fi";
+import { FiBell, FiCheckCircle, FiTrash2 } from "react-icons/fi";
 import Navbar from "@/components/Navbar";
 
 export default function Notifications() {
@@ -30,9 +30,20 @@ export default function Notifications() {
     loadNotif();
   };
 
+  const deleteNotif = async (id) => {
+    if (!confirm("Apakah kamu yakin ingin menghapus notifikasi ini?")) return;
+
+    await fetch("/api/notifications", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    loadNotif();
+  };
+
   return (
     <div>
-      {/* NAVBAR HARUS DI LUAR CONTAINER */}
       <Navbar />
 
       <div className="p-6 max-w-2xl mx-auto mt-4">
@@ -50,9 +61,7 @@ export default function Notifications() {
               <div
                 key={n.id}
                 className={`p-5 rounded-xl border shadow-sm transition hover:shadow-md ${
-                  n.is_read
-                    ? "bg-white border-gray-200"
-                    : "bg-amber-50 border-amber-200"
+                  n.is_read ? "bg-white border-gray-200" : "bg-amber-50 border-amber-200"
                 }`}
               >
                 <div className="flex items-start justify-between">
@@ -63,16 +72,25 @@ export default function Notifications() {
                     </small>
                   </div>
 
-                  {n.is_read ? (
-                    <FiCheckCircle className="text-green-600 mt-1 text-xl" />
-                  ) : (
+                  <div className="flex flex-col items-end gap-1">
+                    {n.is_read ? (
+                      <FiCheckCircle className="text-green-600 text-xl" />
+                    ) : (
+                      <button
+                        onClick={() => markAsRead(n.id)}
+                        className="text-sm text-blue-600 hover:text-blue-700 underline"
+                      >
+                        Tandai dibaca
+                      </button>
+                    )}
+
                     <button
-                      onClick={() => markAsRead(n.id)}
-                      className="text-sm text-blue-600 hover:text-blue-700 underline"
+                      onClick={() => deleteNotif(n.id)}
+                      className="text-sm text-red-600 hover:text-red-700 underline flex items-center gap-1"
                     >
-                      Tandai dibaca
+                      <FiTrash2 /> Hapus
                     </button>
-                  )}
+                  </div>
                 </div>
               </div>
             ))}

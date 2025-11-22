@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { FiBell, FiClock } from "react-icons/fi";
 
 export default function Navbar() {
   const [session, setSession] = useState(null);
@@ -30,7 +29,7 @@ export default function Navbar() {
 
     const loadNotif = async () => {
       const res = await fetch("/api/notifications", {
-        headers: { "user-id": session.id }
+        headers: { "user-id": session.id },
       });
 
       const data = await res.json();
@@ -81,6 +80,9 @@ export default function Navbar() {
             <button onClick={() => router.push("/books")} className="hover:text-amber-700">
               Books
             </button>
+            <button onClick={() => router.push("/peminjaman")} className="hover:text-amber-700">
+              Peminjaman
+            </button>
           </div>
         </div>
 
@@ -92,21 +94,12 @@ export default function Navbar() {
             onClick={() => router.push("/notifications")}
             className="hidden md:flex text-amber-900 text-2xl hover:text-amber-700 relative"
           >
-            <FiBell />
-
+            🔔
             {unread > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1">
                 {unread}
               </span>
             )}
-          </button>
-
-          {/* HISTORY */}
-          <button
-            onClick={() => router.push("/history")}
-            className="hidden md:flex text-amber-900 text-2xl hover:text-amber-700"
-          >
-            <FiClock />
           </button>
 
           {/* PROFILE */}
@@ -120,21 +113,18 @@ export default function Navbar() {
 
             {profileOpen && (
               <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 shadow-lg rounded-lg py-1 z-30">
-
                 <button
                   onClick={() => router.push("/profile")}
                   className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                 >
                   Profile
                 </button>
-
                 <button
                   onClick={() => router.push("/wishlist")}
                   className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                 >
                   Wishlist
                 </button>
-
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
                   className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
@@ -160,7 +150,7 @@ export default function Navbar() {
         <div className="md:hidden bg-amber-50 border-t flex flex-col px-6 py-3 space-y-2">
           <button onClick={() => router.push("/home")} className="text-left font-medium">Home</button>
           <button onClick={() => router.push("/books")} className="text-left font-medium">Books</button>
-          <button onClick={() => router.push("/history")} className="text-left font-medium">History</button>
+          <button onClick={() => router.push("/borrowings")} className="text-left font-medium">Peminjaman</button>
           <button onClick={() => router.push("/wishlist")} className="text-left font-medium">Wishlist</button>
 
           <hr className="border-amber-200" />

@@ -11,16 +11,31 @@ export default function DetailBook() {
 
   const bookId = params?.id;
 
+  // 🏷 Mapping kategori angka → teks
+  const categoryMap = {
+    1: "Pemrograman",
+    2: "Umum",
+    3: "Novel",
+  };
+
   // 🔍 Ambil detail buku
   useEffect(() => {
     const fetchBook = async () => {
       try {
         if (!bookId) return;
+
         const res = await fetch(`/api/books/${bookId}`);
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.error || "Gagal mengambil data buku");
-        setBook(data);
+
+        // 🟢 Convert kategori angka → teks
+        const mapped = {
+          ...data,
+          category: categoryMap[data.category] || "Tidak diketahui",
+        };
+
+        setBook(mapped);
       } catch (err) {
         console.error("Error fetching book:", err);
       } finally {
@@ -63,17 +78,24 @@ export default function DetailBook() {
         <div className="flex-1 p-8 flex flex-col justify-center">
           <h1 className="text-3xl font-bold text-amber-900 mb-3">{book.title}</h1>
 
-          <p className="text-gray-700 mb-1"><strong>Penulis:</strong> {book.author || "-"}</p>
+          <p className="text-gray-700 mb-1">
+            <strong>Penulis:</strong> {book.author || "-"}
+          </p>
 
           <p className="text-gray-700 mb-1">
             <strong>Kategori:</strong>{" "}
             <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md text-sm font-medium">
-              {book.category || "Umum"}
+              {book.category}
             </span>
           </p>
 
-          <p className="text-gray-700 mb-1"><strong>Penerbit:</strong> {book.publisher || "-"}</p>
-          <p className="text-gray-700 mb-3"><strong>Tahun:</strong> {book.year || "-"}</p>
+          <p className="text-gray-700 mb-1">
+            <strong>Penerbit:</strong> {book.publisher || "-"}
+          </p>
+
+          <p className="text-gray-700 mb-3">
+            <strong>Tahun:</strong> {book.year || "-"}
+          </p>
 
           {/* Stok */}
           {book.stock > 0 ? (
@@ -98,7 +120,6 @@ export default function DetailBook() {
           {/* Tombol Aksi */}
           <div className="flex gap-3 mt-6">
 
-            {/* 🔙 Kembali ke Home */}
             <Link
               href="/home"
               className="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition"
@@ -106,7 +127,6 @@ export default function DetailBook() {
               ← Kembali
             </Link>
 
-            {/* 📘 Pinjam Buku */}
             <Link
               href={`/borrow/${book.id}`}
               className={`px-5 py-2.5 rounded-lg text-white font-medium shadow-md transition ${

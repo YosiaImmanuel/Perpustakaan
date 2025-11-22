@@ -8,6 +8,12 @@ export default function WishlistPage() {
   const [session, setSession] = useState(null);
   const router = useRouter();
 
+  const categoryNames = {
+    1: "Pemrograman",
+    2: "Umum",
+    3: "Novel",
+  };
+
   useEffect(() => {
     const load = async () => {
       const s = await fetch("/api/session");
@@ -25,10 +31,31 @@ export default function WishlistPage() {
     load();
   }, []);
 
-const pinjamBuku = (bookId) => {
-  router.push(`/borrow/${bookId}`);
-};
+  const pinjamBuku = (bookId) => {
+    router.push(`/borrow/${bookId}`);
+  };
 
+  // 🗑 Hapus wishlist
+  const removeWishlist = async (bookId, e) => {
+    e.stopPropagation();
+
+    const res = await fetch("/api/wishlist", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user-id": session.id,
+      },
+      body: JSON.stringify({
+        userId: session.id,
+        bookId: bookId,
+      }),
+    });
+
+    if (res.ok) {
+      // Hapus dari state agar UI langsung update
+      setBooks((prev) => prev.filter((b) => b.book_id !== bookId));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-amber-100 px-6 md:px-20 py-10">
@@ -48,20 +75,19 @@ const pinjamBuku = (bookId) => {
               onClick={() => router.push(`/books/${b.book_id}`)}
               className="relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col cursor-pointer"
             >
-              {/* Wishlist icon */}
+              
+              {/* ❤️ tombol hapus wishlist */}
               <button
                 className="absolute top-3 right-3 text-pink-500 text-2xl"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => removeWishlist(b.book_id, e)}
               >
                 <FaHeart className="text-pink-500 drop-shadow-md" />
               </button>
 
-              {/* Thumbnail */}
               <div className="flex items-center justify-center w-full h-56 bg-amber-100 text-6xl text-amber-700">
                 📘
               </div>
 
-              {/* Content */}
               <div className="p-4 flex flex-col flex-1 justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-amber-900 line-clamp-2">
@@ -73,7 +99,7 @@ const pinjamBuku = (bookId) => {
                   </p>
 
                   <p className="mt-2 text-xs text-amber-700 bg-amber-100 inline-block px-2 py-1 rounded-md font-medium">
-                    🏷 {b.category}
+                    🏷 {categoryNames[b.category] || "Tidak diketahui"}
                   </p>
                 </div>
 

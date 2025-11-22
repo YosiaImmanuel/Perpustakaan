@@ -11,13 +11,27 @@ export default function BooksPage() {
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [wishlist, setWishlist] = useState([]);
-
   const [toast, setToast] = useState(null);
+
   const router = useRouter();
 
-  const categories = ["all", "Pemrograman", "Umum"];
+  /* ===========================================================
+     🔖 Mapping kategori (DB → UI)
+     =========================================================== */
+  const categoryMap = {
+    1: "Pemrograman",
+    2: "Umum",
+    3: "Novel",
+  };
 
-  // Load session + books + wishlist
+  /* ===========================================================
+     📂 Daftar kategori untuk filter
+     =========================================================== */
+  const categories = ["all", "Pemrograman", "Umum", "Novel"];
+
+  /* ===========================================================
+     🔄 Load session + books + wishlist
+     =========================================================== */
   useEffect(() => {
     const loadData = async () => {
       const res = await fetch("/api/session");
@@ -30,13 +44,20 @@ export default function BooksPage() {
 
       setSession(data.user);
 
-      // Load books
+      // Ambil buku
       const bookRes = await fetch("/api/books");
       const booksData = await bookRes.json();
-      setBooks(booksData);
-      setFilteredBooks(booksData);
 
-      // Load wishlist user dari DB
+      // Map: angka → teks kategori
+      const mappedBooks = booksData.map((b) => ({
+        ...b,
+        category: categoryMap[b.category] || "Lainnya",
+      }));
+
+      setBooks(mappedBooks);
+      setFilteredBooks(mappedBooks);
+
+      // Ambil wishlist user
       const wlRes = await fetch("/api/wishlist", {
         headers: {
           "x-user-id": data.user.id,
@@ -50,13 +71,17 @@ export default function BooksPage() {
     loadData();
   }, [router]);
 
-  // Filter kategori
+  /* ===========================================================
+     🎯 Filter kategori
+     =========================================================== */
   useEffect(() => {
     if (selectedCategory === "all") setFilteredBooks(books);
     else setFilteredBooks(books.filter((b) => b.category === selectedCategory));
   }, [selectedCategory, books]);
 
-  // Auto close toast
+  /* ===========================================================
+     ⏳ Auto close toast
+     =========================================================== */
   useEffect(() => {
     if (toast) {
       const timer = setTimeout(() => setToast(null), 2000);
@@ -64,12 +89,13 @@ export default function BooksPage() {
     }
   }, [toast]);
 
-  // Toggle wishlist database
+  /* ===========================================================
+     💗 Wishlist toggle
+     =========================================================== */
   const toggleWishlist = async (bookId) => {
     const already = wishlist.includes(bookId);
 
     if (already) {
-      // Hapus
       await fetch("/api/wishlist", {
         method: "DELETE",
         body: JSON.stringify({
@@ -80,7 +106,6 @@ export default function BooksPage() {
 
       setWishlist((prev) => prev.filter((id) => id !== bookId));
     } else {
-      // Tambah
       await fetch("/api/wishlist", {
         method: "POST",
         body: JSON.stringify({

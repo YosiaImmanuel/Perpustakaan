@@ -55,7 +55,7 @@ export default function BorrowBookPage() {
 
       if (res.ok) {
         alert("✅ Pengajuan peminjaman dikirim. Menunggu persetujuan admin.");
-        router.push("/history");
+        router.push("/peminjaman");
       } else {
         alert("❌ Gagal mengajukan pinjaman.");
       }

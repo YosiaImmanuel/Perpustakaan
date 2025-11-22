@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import Providers from "@/components/Providers"; // Client wrapper
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +24,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
       >
-        {children}
+        {/* Pindahkan SessionProvider ke Client Component */}
+        <Providers>
+          {children}
+        </Providers>
+
         {/* Toaster untuk notifikasi global */}
         <Toaster position="top-right" reverseOrder={false} />
       </body>

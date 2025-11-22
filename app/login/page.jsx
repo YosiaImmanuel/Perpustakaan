@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn, getSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -34,10 +34,7 @@ export default function Login() {
       return;
     }
 
-    // Ambil data session setelah login
-    const session = await getSession();
-
-    toast.success("✅ Login berhasil! Selamat datang kembali 👋", {
+    toast.success("✅ Login berhasil!", {
       style: {
         borderRadius: "10px",
         background: "#fef3c7",
@@ -45,19 +42,24 @@ export default function Login() {
       },
     });
 
-    // Arahkan sesuai role
+    // Penting: Refresh session
+    router.refresh();
+
     setTimeout(() => {
-      if (session?.user?.role === "admin") {
-        router.push("/admin/books");
-      } else {
-        router.push("/home");
-      }
-    }, 1200);
+      // Langsung cek role via sessionStorage token → NextAuth simpan di JWT
+      fetch("/api/auth/session")
+        .then((res) => res.json())
+        .then((data) => {
+          const role = data?.user?.role;
+
+          if (role === "admin") router.push("/admin/books");
+          else router.push("/home");
+        });
+    }, 1000);
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
-      {/* Left side: Form */}
       <div className="flex flex-col justify-center items-center md:w-1/2 p-10">
         <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md">
           <h1 className="text-3xl font-semibold mb-6 text-center text-amber-800">
@@ -71,8 +73,8 @@ export default function Login() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@mail.com"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder-gray-400 text-gray-900"
+                placeholder="example@gmail.com"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-amber-400"
                 required
               />
             </div>
@@ -84,7 +86,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Masukkan password"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder-gray-400 text-gray-900"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-amber-400"
                 required
               />
             </div>
@@ -114,7 +116,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Right side: Image */}
       <div className="hidden md:flex md:w-1/2 items-center justify-center bg-gray-100">
         <Image
           src="/library.jpg"

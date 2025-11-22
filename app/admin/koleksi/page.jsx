@@ -1,11 +1,20 @@
 "use client";
 
+import AdminSidebar from "@/components/admin/AdminSidebar";
 import { useEffect, useState } from "react";
 
 export default function AdminKoleksiPage() {
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredBooks, setFilteredBooks] = useState([]);
+  const [openSidebar, setOpenSidebar] = useState(true);
+
+  const convertCategory = (cat) => {
+    if (cat === 1 || cat === "1") return "Pemrograman";
+    if (cat === 2 || cat === "2") return "Umum";
+    if (cat === 3 || cat === "3") return "Novel";
+    return "Tidak diketahui";
+  };
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -30,6 +39,11 @@ export default function AdminKoleksiPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-amber-100 p-8">
+      <AdminSidebar 
+        openSidebar={openSidebar}
+        setOpenSidebar={setOpenSidebar}
+      />
+
       <h1 className="text-3xl font-bold text-amber-800 mb-8 text-center">
         📚 Koleksi Buku Perpustakaan
       </h1>
@@ -68,12 +82,21 @@ export default function AdminKoleksiPage() {
                   <h3 className="text-lg font-semibold text-amber-900 line-clamp-2">
                     {book.title}
                   </h3>
+
                   <p className="text-sm text-gray-600 mt-1">{book.author}</p>
                   <p className="text-xs text-gray-500 mt-1">
                     {book.publisher} • {book.year}
                   </p>
+
+                  {/* ⭐ Kategori */}
+                  <p className="mt-2">
+                    <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 text-xs rounded-full font-medium">
+                      {convertCategory(book.category)}
+                    </span>
+                  </p>
                 </div>
 
+                {/* Stok */}
                 <div className="mt-4">
                   {book.stock > 0 ? (
                     <span className="inline-block bg-green-100 text-green-800 px-3 py-1 text-xs rounded-full font-medium">
