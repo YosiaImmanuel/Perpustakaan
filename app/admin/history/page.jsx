@@ -1,12 +1,21 @@
 "use client";
 
-import AdminSidebar from "@/components/admin/AdminSidebar";
 import { useEffect, useState } from "react";
+import {
+  HiClipboardList,
+  HiCheckCircle,
+  HiXCircle,
+  HiClock,
+  HiCalendar,
+  HiUser,
+  HiBookOpen,
+  HiFilter,
+} from "react-icons/hi";
 
 export default function AdminHistory() {
-  const [openSidebar, setOpenSidebar] = useState(false); // <<< WAJIB
   const [borrows, setBorrows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
 
   const fetchBorrows = async () => {
     setLoading(true);
@@ -26,8 +35,11 @@ export default function AdminHistory() {
   }, []);
 
   const handleStatus = async (borrowId, status) => {
-    if (status === "approved" && !confirm("Setujui peminjaman ini?")) return;
-    if (status === "rejected" && !confirm("Tolak peminjaman ini?")) return;
+    const confirmMsg = status === "approved" 
+      ? "Apakah Anda yakin ingin menyetujui peminjaman ini?" 
+      : "Apakah Anda yakin ingin menolak peminjaman ini?";
+    
+    if (!confirm(confirmMsg)) return;
 
     try {
       const res = await fetch("/api/borrows", {
@@ -42,7 +54,7 @@ export default function AdminHistory() {
         return;
       }
 
-      alert(status === "approved" ? "✅ Peminjaman disetujui" : "❌ Peminjaman ditolak");
+      alert(status === "approved" ? "✅ Peminjaman berhasil disetujui" : "❌ Peminjaman ditolak");
       fetchBorrows();
     } catch (err) {
       console.error(err);
@@ -50,81 +62,240 @@ export default function AdminHistory() {
     }
   };
 
+  const getStatusConfig = (status) => {
+    const configs = {
+      pending: {
+        icon: HiClock,
+        text: "Menunggu",
+        bgColor: "bg-yellow-100",
+        textColor: "text-yellow-800",
+        borderColor: "border-yellow-200",
+      },
+      approved: {
+        icon: HiCheckCircle,
+        text: "Disetujui",
+        bgColor: "bg-green-100",
+        textColor: "text-green-800",
+        borderColor: "border-green-200",
+      },
+      returned: {
+        icon: HiBookOpen,
+        text: "Dikembalikan",
+        bgColor: "bg-blue-100",
+        textColor: "text-blue-800",
+        borderColor: "border-blue-200",
+      },
+      rejected: {
+        icon: HiXCircle,
+        text: "Ditolak",
+        bgColor: "bg-red-100",
+        textColor: "text-red-800",
+        borderColor: "border-red-200",
+      },
+    };
+    return configs[status] || configs.pending;
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const filteredBorrows = filter === "all" 
+    ? borrows 
+    : borrows.filter(b => b.status === filter);
+
+  const statusCounts = {
+    all: borrows.length,
+    pending: borrows.filter(b => b.status === "pending").length,
+    approved: borrows.filter(b => b.status === "approved").length,
+    returned: borrows.filter(b => b.status === "returned").length,
+    rejected: borrows.filter(b => b.status === "rejected").length,
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg font-medium">Memuat riwayat...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <AdminSidebar 
-        openSidebar={openSidebar}
-        setOpenSidebar={setOpenSidebar}
-      />
+    <div>
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
+        <div className="px-6 py-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-lg">
+              <HiClipboardList className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Riwayat Peminjaman</h1>
+              <p className="text-gray-600">Kelola semua permintaan peminjaman buku</p>
+            </div>
+          </div>
 
-      <div className="flex-1 p-6">
-        {/* Tombol buka sidebar hanya di mobile */}
-        <button
-          onClick={() => setOpenSidebar(true)}
-          className="md:hidden bg-amber-600 text-white px-3 py-2 rounded mb-4"
-        >
-          ☰ Menu
-        </button>
+          {/* Filter Tabs */}
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {[
+              { value: "all", label: "Semua", count: statusCounts.all },
+              { value: "pending", label: "Menunggu", count: statusCounts.pending },
+              { value: "approved", label: "Disetujui", count: statusCounts.approved },
+              { value: "returned", label: "Dikembalikan", count: statusCounts.returned },
+              { value: "rejected", label: "Ditolak", count: statusCounts.rejected },
+            ].map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setFilter(tab.value)}
+                className={`px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
+                  filter === tab.value
+                    ? "bg-amber-600 text-white shadow-md"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {tab.label}
+                {tab.count > 0 && (
+                  <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${
+                    filter === tab.value 
+                      ? "bg-white text-amber-600" 
+                      : "bg-gray-200 text-gray-700"
+                  }`}>
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-        <h1 className="text-2xl font-bold mb-4">📜 Riwayat Peminjaman (Admin)</h1>
+      {/* Content */}
+      <div className="px-6 py-8">
+        
+        {/* Stats Alert for Pending */}
+        {statusCounts.pending > 0 && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+            <HiClock className="w-6 h-6 text-yellow-600" />
+            <div>
+              <p className="font-semibold text-yellow-900">
+                {statusCounts.pending} permintaan menunggu persetujuan
+              </p>
+              <p className="text-sm text-yellow-700">
+                Segera tinjau dan proses permintaan peminjaman
+              </p>
+            </div>
+          </div>
+        )}
 
-        {loading ? (
-          <p>Memuat...</p>
+        {/* Empty State */}
+        {filteredBorrows.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-12 text-center">
+            <HiClipboardList className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-xl font-medium text-gray-600 mb-2">
+              {filter === "all" 
+                ? "Belum ada peminjaman" 
+                : `Tidak ada peminjaman dengan status "${filter}"`}
+            </p>
+            <p className="text-gray-500">
+              Data akan muncul di sini ketika ada permintaan peminjaman
+            </p>
+          </div>
         ) : (
-          <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-            <table className="w-full border-collapse border text-sm">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-2">Nama Peminjam</th>
-                  <th className="border p-2">Judul Buku</th>
-                  <th className="border p-2">Tanggal Pinjam</th>
-                  <th className="border p-2">Status</th>
-                  <th className="border p-2">Aksi</th>
-                </tr>
-              </thead>
+          <div className="space-y-4">
+            {filteredBorrows.map((borrow) => {
+              const statusConfig = getStatusConfig(borrow.status);
+              const StatusIcon = statusConfig.icon;
 
-              <tbody>
-                {borrows.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="text-center text-gray-500 p-4">
-                      Belum ada peminjaman.
-                    </td>
-                  </tr>
-                ) : (
-                  borrows.map((b) => (
-                    <tr key={b.id}>
-                      <td className="border p-2">{b.student}</td>
-                      <td className="border p-2">{b.book}</td>
-                      <td className="border p-2 text-center">
-                        {b.borrow_date ? b.borrow_date.slice(0, 10) : "-"}
-                      </td>
-                      <td className="border p-2 text-center capitalize">{b.status}</td>
-                      <td className="border p-2 text-center">
-                        {b.status === "pending" ? (
-                          <div className="flex gap-2 justify-center">
+              return (
+                <div
+                  key={borrow.id}
+                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-200 overflow-hidden"
+                >
+                  <div className="p-6">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                      
+                      {/* Left - Borrow Info */}
+                      <div className="flex-1">
+                        <div className="flex items-start gap-4">
+                          {/* Book Icon */}
+                          <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl flex items-center justify-center">
+                            <HiBookOpen className="w-8 h-8 text-amber-600" />
+                          </div>
+
+                          {/* Details */}
+                          <div className="flex-1">
+                            <h3 className="text-lg font-bold text-gray-900 mb-2">
+                              {borrow.book || "Judul tidak tersedia"}
+                            </h3>
+
+                            <div className="space-y-1">
+                              {/* Student Name */}
+                              <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <HiUser className="w-4 h-4 text-amber-600" />
+                                <span className="font-medium">Peminjam:</span>
+                                <span>{borrow.student || "-"}</span>
+                              </div>
+
+                              {/* Borrow Date */}
+                              <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <HiCalendar className="w-4 h-4 text-amber-600" />
+                                <span className="font-medium">Tanggal Pinjam:</span>
+                                <span>{formatDate(borrow.borrow_date)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right - Status & Actions */}
+                      <div className="flex flex-col items-end gap-3">
+                        {/* Status Badge */}
+                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${statusConfig.bgColor} ${statusConfig.textColor} border ${statusConfig.borderColor} font-semibold`}>
+                          <StatusIcon className="w-5 h-5" />
+                          {statusConfig.text}
+                        </div>
+
+                        {/* Action Buttons for Pending */}
+                        {borrow.status === "pending" && (
+                          <div className="flex gap-2">
                             <button
-                              onClick={() => handleStatus(b.id, "approved")}
-                              className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded"
+                              onClick={() => handleStatus(borrow.id, "approved")}
+                              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium"
                             >
+                              <HiCheckCircle className="w-4 h-4" />
                               Setujui
                             </button>
                             <button
-                              onClick={() => handleStatus(b.id, "rejected")}
-                              className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+                              onClick={() => handleStatus(borrow.id, "rejected")}
+                              className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium"
                             >
+                              <HiXCircle className="w-4 h-4" />
                               Tolak
                             </button>
                           </div>
-                        ) : (
-                          <span className="text-sm text-gray-600">{b.status}</span>
                         )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Summary Stats */}
+        {filteredBorrows.length > 0 && (
+          <div className="mt-6 text-sm text-gray-600 text-center">
+            Menampilkan <span className="font-semibold text-gray-900">{filteredBorrows.length}</span> dari{" "}
+            <span className="font-semibold text-gray-900">{borrows.length}</span> peminjaman
           </div>
         )}
       </div>

@@ -2,33 +2,70 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { 
-  HiViewGrid,
-  HiBookOpen,
-  HiCollection,
-  HiClipboardList,
-  HiMenu,
-  HiX,
-  HiChevronDown,
-  HiCog,
-  HiLogout
-} from "react-icons/hi";
+  Home,
+  BookOpen,
+  ClipboardList,
+  Heart,
+  Bell,
+  Menu,
+  X,
+  ChevronDown,
+  Settings,
+  LogOut
+} from "lucide-react";
 
-export default function AdminSidebar() {
+export default function UserSidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [session, setSession] = useState(null);
+  const [unread, setUnread] = useState(0);
   const [profileOpen, setProfileOpen] = useState(false);
   
   const router = useRouter();
   const pathname = usePathname();
-  const { data: session } = useSession();
   const profileRef = useRef(null);
 
   const menu = [
-    { name: "Dashboard", path: "/admin/dashboard", icon: HiViewGrid },
-    { name: "Kelola Buku", path: "/admin/books", icon: HiBookOpen },
-    { name: "Riwayat Peminjaman", path: "/admin/history", icon: HiClipboardList },
+    { name: "Home", path: "/home", icon: Home },
+    { name: "Books", path: "/books", icon: BookOpen },
+    { name: "Peminjaman", path: "/peminjaman", icon: ClipboardList },
+    { name: "Wishlist", path: "/wishlist", icon: Heart },
   ];
+
+  /* ===========================================================
+     Load Session
+     =========================================================== */
+  useEffect(() => {
+    const load = async () => {
+      const res = await fetch("/api/session");
+      const data = await res.json();
+      setSession(data.user || null);
+    };
+    load();
+  }, []);
+
+  /* ===========================================================
+     Load Notifikasi Belum Dibaca
+     =========================================================== */
+  useEffect(() => {
+    if (!session) return;
+
+    const loadNotif = async () => {
+      const res = await fetch("/api/notifications", {
+        headers: { "user-id": session.id },
+      });
+
+      const data = await res.json();
+      const count = data.filter((n) => !n.is_read).length;
+      setUnread(count);
+    };
+
+    loadNotif();
+    const interval = setInterval(loadNotif, 5000);
+
+    return () => clearInterval(interval);
+  }, [session]);
 
   /* ===========================================================
      Close dropdown jika klik di luar
@@ -45,9 +82,9 @@ export default function AdminSidebar() {
   }, []);
 
   const initials =
-    session?.user?.name?.charAt(0).toUpperCase() ||
-    session?.user?.email?.charAt(0).toUpperCase() ||
-    "A";
+    session?.name?.charAt(0).toUpperCase() ||
+    session?.email?.charAt(0).toUpperCase() ||
+    "U";
 
   return (
     <>
@@ -69,16 +106,16 @@ export default function AdminSidebar() {
               aria-label={isExpanded ? "Tutup sidebar" : "Buka sidebar"}
             >
               {isExpanded ? (
-                <HiX className="w-5 h-5" />
+                <X className="w-5 h-5" />
               ) : (
-                <HiMenu className="w-5 h-5" />
+                <Menu className="w-5 h-5" />
               )}
             </button>
             
             {isExpanded && (
               <div className="flex items-center gap-2">
-                <HiViewGrid className="w-5 h-5 text-amber-500" />
-                <span className="text-lg font-semibold text-white">Admin</span>
+                <BookOpen className="w-5 h-5 text-amber-500" />
+                <span className="text-lg font-semibold text-white">Library</span>
               </div>
             )}
           </div>
@@ -86,7 +123,7 @@ export default function AdminSidebar() {
           {/* MENU NAVIGATION */}
           <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
             {menu.map((item) => {
-              const active = pathname.startsWith(item.path);
+              const active = pathname === item.path;
               const IconComponent = item.icon;
 
               return (
@@ -112,6 +149,39 @@ export default function AdminSidebar() {
                 </button>
               );
             })}
+
+            {/* Notifikasi */}
+            <button
+              onClick={() => router.push("/notifications")}
+              className={`
+                flex items-center w-full p-3 rounded-lg
+                text-gray-400 hover:bg-gray-800 hover:text-white
+                transition-all duration-200 relative
+                ${!isExpanded && "justify-center"}
+                ${pathname === "/notifications" ? "bg-amber-600 text-white shadow-lg" : ""}
+              `}
+              title={!isExpanded ? "Notifikasi" : ""}
+            >
+              <div className="relative flex-shrink-0">
+                <Bell className="w-5 h-5" />
+                {/* Badge notifikasi untuk collapsed */}
+                {unread > 0 && !isExpanded && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                    {unread > 9 ? '9+' : unread}
+                  </span>
+                )}
+              </div>
+              {isExpanded && (
+                <div className="ml-3 flex items-center justify-between w-full">
+                  <span className="font-medium">Notifikasi</span>
+                  {unread > 0 && (
+                    <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5 font-bold">
+                      {unread}
+                    </span>
+                  )}
+                </div>
+              )}
+            </button>
           </nav>
 
           {/* BOTTOM SECTION - Profile */}
@@ -142,20 +212,20 @@ export default function AdminSidebar() {
                   <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></div>
                 </div>
                 
-                {isExpanded && session?.user && (
+                {isExpanded && session && (
                   <div className="ml-3 text-left flex-1 min-w-0">
                     <div className="font-medium text-white truncate">
-                      {session.user.name || session.user.email}
+                      {session.name || session.email}
                     </div>
                     <div className="flex items-center gap-1 mt-0.5">
-                      <span className="inline-block px-2 py-0.5 bg-amber-600 text-white text-xs font-semibold rounded">
-                        Admin
+                      <span className="inline-block px-2 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded">
+                        {session.role || "User"}
                       </span>
                     </div>
                   </div>
                 )}
                 {isExpanded && (
-                  <HiChevronDown 
+                  <ChevronDown 
                     className={`w-4 h-4 transition-transform ${profileOpen ? "rotate-180" : ""}`}
                   />
                 )}
@@ -166,12 +236,12 @@ export default function AdminSidebar() {
                 <div className="absolute bottom-full left-0 right-0 mb-2 bg-gray-800 border border-gray-700 shadow-xl rounded-lg py-1 mx-3">
                   <button
                     onClick={() => {
-                      router.push("/admin/profile");
+                      router.push("/profile");
                       setProfileOpen(false);
                     }}
                     className="w-full text-left px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors flex items-center gap-2"
                   >
-                    <HiCog className="w-4 h-4" />
+                    <Settings className="w-4 h-4" />
                     <span>Profile</span>
                   </button>
                   <div className="border-t border-gray-700 my-1"></div>
@@ -183,7 +253,7 @@ export default function AdminSidebar() {
                     }}
                     className="w-full text-left px-4 py-2 text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors flex items-center gap-2"
                   >
-                    <HiLogout className="w-4 h-4" />
+                    <LogOut className="w-4 h-4" />
                     <span>Logout</span>
                   </button>
                 </div>

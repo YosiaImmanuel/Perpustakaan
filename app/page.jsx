@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
+import { FiSearch, FiBell, FiBarChart2, FiHeart } from "react-icons/fi";
+
 
 export default function LandingPage() {
   const router = useRouter();
@@ -100,7 +101,7 @@ export default function LandingPage() {
       {/* Hero Section with Background - BERANDA */}
       <section
         ref={heroRef}
-        className={`relative flex flex-col-reverse md:flex-row items-center justify-between px-6 md:px-20 py-24 overflow-hidden transform transition-all duration-1000 ${
+        className={`relative flex items-center justify-center px-6 md:px-20 py-24 overflow-hidden transform transition-all duration-1000 ${
           heroVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
         }`}
         style={{
@@ -111,9 +112,9 @@ export default function LandingPage() {
         }}
       >
         {/* Overlay */}
-        <div className="absolute inset-0 bg-white/90 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-white/40"></div>
         
-        <div className="relative z-10 max-w-xl text-center md:text-left">
+        <div className="relative z-10 max-w-3xl text-center">
           <div className="inline-block mb-4 px-4 py-1.5 bg-gray-900 text-white text-xs font-semibold rounded-full">
             ✨ Modern & Professional
           </div>
@@ -126,7 +127,7 @@ export default function LandingPage() {
           <p className="text-gray-600 mb-8 text-lg leading-relaxed">
             Temukan dan kelola koleksi buku dengan mudah. Nikmati pengalaman membaca yang nyaman dan menyenangkan.
           </p>
-          <div className="flex justify-center md:justify-start space-x-4">
+          <div className="flex justify-center space-x-4">
             <button
               onClick={() => router.push("/register")}
               className="bg-gray-900 hover:bg-gray-800 text-white font-semibold px-8 py-4 rounded-xl shadow-lg transform hover:scale-105 hover:shadow-xl transition-all duration-300"
@@ -141,68 +142,51 @@ export default function LandingPage() {
             </button>
           </div>
         </div>
-
-        <div className="relative z-10 mb-10 md:mb-0">
-          <div className="absolute -inset-4 bg-gradient-to-r from-gray-300 to-gray-400 rounded-3xl blur-2xl opacity-20"></div>
-          <img
-            src={"/background.jpg"}
-            alt="Books"
-            width={550}
-            height={450}
-            className="relative rounded-3xl shadow-2xl transform hover:scale-105 transition-transform duration-500 border-4 border-white"
-          />
-        </div>
       </section>
 
-      {/* Info Section - TENTANG */}
       <section ref={aboutRef} className="py-24 px-6 md:px-20 text-center bg-white scroll-mt-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="inline-block mb-4 px-4 py-1.5 bg-gray-100 text-gray-800 text-sm font-semibold rounded-full">
-            Mengapa Kami?
+    <div className="max-w-7xl mx-auto">
+      <div className="inline-block mb-4 px-4 py-1.5 bg-gray-100 text-gray-800 text-sm font-semibold rounded-full">
+        Mengapa Kami?
+      </div>
+      <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+        Mengapa Memilih Perpustakaan Kami?
+      </h2>
+      <p className="max-w-3xl mx-auto text-gray-600 mb-16 text-lg leading-relaxed">
+        Kami menyediakan akses mudah ke berbagai koleksi buku, sistem manajemen transaksi yang efisien, serta pengalaman pengguna yang modern dan nyaman.
+      </p>
+
+      <div className="grid md:grid-cols-3 gap-8">
+        {[0, 1, 2].map((_, i) => (
+          <div
+            key={i}
+            ref={(el) => (infoRef.current[i] = el)}
+            className={`group bg-white p-8 rounded-3xl shadow-sm border border-gray-200 transform transition-all duration-700 ${
+              infoVisible[i]
+                ? "opacity-100 translate-y-0 scale-100"
+                : "opacity-0 translate-y-10 scale-95"
+            } hover:-translate-y-3 hover:shadow-2xl hover:border-gray-900`}
+          >
+            {/* Tanpa gambar */}
+            <h3 className="font-bold text-2xl text-gray-900 mb-4">
+              {i === 0 && "Koleksi Lengkap"}
+              {i === 1 && "Mudah Diakses"}
+              {i === 2 && "Transaksi Aman"}
+            </h3>
+
+            <p className="text-gray-600 text-base leading-relaxed">
+              {i === 0 &&
+                "Dari Pemrograman, Umum, Novel, semua tersedia di satu tempat."}
+              {i === 1 &&
+                "Akses kapan saja, di mana saja melalui platform berbasis web."}
+              {i === 2 &&
+                "Setiap peminjaman dan pengembalian buku tercatat dengan baik dan aman."}
+            </p>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Mengapa Memilih Perpustakaan Kami?
-          </h2>
-          <p className="max-w-3xl mx-auto text-gray-600 mb-16 text-lg leading-relaxed">
-            Kami menyediakan akses mudah ke berbagai koleksi buku, sistem manajemen transaksi yang efisien, serta pengalaman pengguna yang modern dan nyaman.
-          </p>
-          <div className="grid md:grid-cols-3 gap-8">
-            {["books1.jpg", "books2.jpg", "books3.jpg"].map((img, i) => (
-              <div
-                key={i}
-                ref={(el) => (infoRef.current[i] = el)}
-                className={`group bg-white p-8 rounded-3xl shadow-sm border border-gray-200 transform transition-all duration-700 ${
-                  infoVisible[i] ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-10 scale-95"
-                } hover:-translate-y-3 hover:shadow-2xl hover:border-gray-900`}
-              >
-                <div className="relative overflow-hidden rounded-2xl mb-6">
-                  <Image
-                    src={`/${img}`}
-                    alt={`Card ${i + 1}`}
-                    width={300}
-                    height={200}
-                    className="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                <h3 className="font-bold text-2xl text-gray-900 mb-4">
-                  {i === 0 && "Koleksi Lengkap"}
-                  {i === 1 && "Mudah Diakses"}
-                  {i === 2 && "Transaksi Aman"}
-                </h3>
-                <p className="text-gray-600 text-base leading-relaxed">
-                  {i === 0 &&
-                    "Dari fiksi, non-fiksi, hingga akademik — semua tersedia di satu tempat."}
-                  {i === 1 &&
-                    "Akses kapan saja, di mana saja melalui platform berbasis web."}
-                  {i === 2 &&
-                    "Setiap peminjaman dan pengembalian buku tercatat dengan baik dan aman."}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        ))}
+      </div>
+    </div>
+  </section>
 
       {/* Features Detail Section - FITUR */}
       <section ref={featuresRef} className="py-24 px-6 md:px-20 bg-gray-50 scroll-mt-20">
@@ -215,24 +199,27 @@ export default function LandingPage() {
               Fitur yang Memudahkan Anda
             </h2>
           </div>
-          <div className="space-y-16">
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { title: "Pencarian Cepat & Akurat", desc: "Temukan buku yang Anda cari dalam hitungan detik dengan sistem pencarian cerdas kami.", icon: "🔍" },
-              { title: "Notifikasi Real-time", desc: "Dapatkan pemberitahuan langsung untuk tenggat pengembalian dan buku favorit yang tersedia.", icon: "🔔" },
-              { title: "Riwayat Peminjaman", desc: "Lacak semua aktivitas peminjaman Anda dengan mudah dan detail.", icon: "📊" },
-              { title: "Wishlist Buku", desc: "Simpan buku favorit Anda dan dapatkan notifikasi saat tersedia.", icon: "❤️" }
+              { title: "Pencarian Cepat & Akurat", desc: "Temukan buku yang Anda cari dalam hitungan detik dengan sistem pencarian cerdas kami.", Icon: FiSearch },
+              { title: "Notifikasi Real-time", desc: "Dapatkan pemberitahuan langsung untuk tenggat pengembalian dan buku favorit yang tersedia.", Icon: FiBell },
+              { title: "Riwayat Peminjaman", desc: "Lacak semua aktivitas peminjaman Anda dengan mudah dan detail.", Icon: FiBarChart2 },
+              { title: "Wishlist Buku", desc: "Simpan buku favorit Anda dan dapatkan notifikasi saat tersedia.", Icon: FiHeart }
             ].map((feature, i) => (
-              <div key={i} className={`flex flex-col md:flex-row items-center gap-12 ${i % 2 === 1 ? "md:flex-row-reverse" : ""}`}>
-                <div className="flex-1">
-                  <div className="text-6xl mb-6">{feature.icon}</div>
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">{feature.title}</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed">{feature.desc}</p>
+              <div
+                key={i}
+                className="group bg-white p-8 rounded-3xl shadow-sm border border-gray-200 transform transition-all duration-700 hover:-translate-y-3 hover:shadow-2xl hover:border-gray-900"
+              >
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <feature.Icon className="text-white text-3xl" />
                 </div>
-                <div className="flex-1">
-                  <div className="bg-white p-12 rounded-3xl shadow-lg border border-gray-200">
-                    <div className="w-full h-48 bg-gray-200 rounded-2xl"></div>
-                  </div>
-                </div>
+                <h3 className="font-bold text-2xl text-gray-900 mb-4">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 text-base leading-relaxed">
+                  {feature.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -287,16 +274,14 @@ export default function LandingPage() {
               <ul className="space-y-2 text-sm">
                 <li><button className="hover:text-white transition-colors">Peminjaman Buku</button></li>
                 <li><button className="hover:text-white transition-colors">E-Book</button></li>
-                <li><button className="hover:text-white transition-colors">Reservasi</button></li>
-                <li><button className="hover:text-white transition-colors">Membership</button></li>
-              </ul>
+                <li><button className="hover:text-white transition-colors">Reservasi</button></li>              </ul>
             </div>
             <div>
               <h4 className="text-white font-semibold mb-4">Kontak</h4>
               <ul className="space-y-2 text-sm">
-                <li>Email: info@library.com</li>
-                <li>Phone: (021) 123-4567</li>
-                <li>Address: Jakarta, Indonesia</li>
+                <li>Email: library@gmail.com</li>
+                <li>Phone: 0895-3409-92045 </li>
+                <li>Address: Depok, Indonesia</li>
               </ul>
             </div>
           </div>
