@@ -8,7 +8,7 @@ export default function AdminLayout({ children }) {
       {/* SIDEBAR */}
       <AdminSidebar />
 
-      {/* CONTENT - No padding here, let children handle their own spacing */}
+      {/* CONTENT */}
       <main className="lg:ml-16 transition-all duration-300">
         {children}
       </main>

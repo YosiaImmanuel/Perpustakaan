@@ -125,10 +125,10 @@ export default function AdminBooks() {
   };
 
   const getCategoryColor = (cat) => {
-    if (cat === 1) return "bg-blue-100 text-blue-800";
-    if (cat === 2) return "bg-purple-100 text-purple-800";
-    if (cat === 3) return "bg-pink-100 text-pink-800";
-    return "bg-gray-100 text-gray-800";
+    if (cat === 1) return "bg-blue-100 text-blue-900 border border-blue-200";
+    if (cat === 2) return "bg-purple-100 text-purple-900 border border-purple-200";
+    if (cat === 3) return "bg-pink-100 text-pink-900 border border-pink-200";
+    return "bg-gray-100 text-gray-900 border border-gray-200";
   };
 
   if (loading) {
@@ -136,7 +136,7 @@ export default function AdminBooks() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg font-medium">Memuat data...</p>
+          <p className="text-gray-700 text-lg font-semibold">Memuat data...</p>
         </div>
       </div>
     );
@@ -153,7 +153,7 @@ export default function AdminBooks() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Kelola Buku</h1>
-              <p className="text-gray-600">Tambah, edit, dan hapus buku perpustakaan</p>
+              <p className="text-gray-700 font-medium">Tambah, edit, dan hapus buku perpustakaan</p>
             </div>
           </div>
         </div>
@@ -181,13 +181,13 @@ export default function AdminBooks() {
             <div className="grid md:grid-cols-2 gap-4">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-800 mb-2">
                   Judul Buku <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   placeholder="Masukkan judul buku"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 font-medium"
                   required
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -196,13 +196,13 @@ export default function AdminBooks() {
 
               {/* Author */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-800 mb-2">
                   Penulis
                 </label>
                 <input
                   type="text"
                   placeholder="Masukkan nama penulis"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 font-medium"
                   value={form.author}
                   onChange={(e) => setForm({ ...form, author: e.target.value })}
                 />
@@ -210,13 +210,13 @@ export default function AdminBooks() {
 
               {/* Publisher */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-800 mb-2">
                   Penerbit
                 </label>
                 <input
                   type="text"
                   placeholder="Masukkan nama penerbit"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 font-medium"
                   value={form.publisher}
                   onChange={(e) => setForm({ ...form, publisher: e.target.value })}
                 />
@@ -224,13 +224,13 @@ export default function AdminBooks() {
 
               {/* Year */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-800 mb-2">
                   Tahun Terbit
                 </label>
                 <input
                   type="number"
                   placeholder="2024"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 font-medium"
                   value={form.year}
                   onChange={(e) => setForm({ ...form, year: e.target.value })}
                 />
@@ -238,14 +238,14 @@ export default function AdminBooks() {
 
               {/* Stock */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-800 mb-2">
                   Stok
                 </label>
                 <input
                   type="number"
                   placeholder="0"
                   min="0"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 font-medium"
                   value={form.stock}
                   onChange={(e) => setForm({ ...form, stock: e.target.value })}
                 />
@@ -253,11 +253,11 @@ export default function AdminBooks() {
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-800 mb-2">
                   Kategori
                 </label>
                 <select
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 font-medium"
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                 >
@@ -272,7 +272,7 @@ export default function AdminBooks() {
             <div className="flex gap-3 pt-4">
               <button
                 onClick={handleSubmit}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-semibold rounded-xl shadow-md transition-all"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold rounded-xl shadow-md transition-all text-base"
               >
                 {editingId ? (
                   <>
@@ -290,7 +290,7 @@ export default function AdminBooks() {
               {editingId && (
                 <button
                   onClick={resetForm}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl transition-all"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-900 font-bold rounded-xl transition-all text-base"
                 >
                   <HiX className="w-5 h-5" />
                   Batal
@@ -305,13 +305,13 @@ export default function AdminBooks() {
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search */}
             <div className="flex-1 relative">
-              <HiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <HiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Cari judul atau penulis..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 font-medium"
               />
             </div>
 
@@ -319,7 +319,7 @@ export default function AdminBooks() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="md:w-64 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              className="md:w-64 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 font-medium"
             >
               <option value="all">Semua Kategori</option>
               <option value="1">Pemrograman</option>
@@ -328,37 +328,37 @@ export default function AdminBooks() {
             </select>
           </div>
 
-          <div className="mt-4 text-sm text-gray-600">
-            Menampilkan <span className="font-semibold text-gray-900">{filteredBooks.length}</span> dari{" "}
-            <span className="font-semibold text-gray-900">{books.length}</span> buku
+          <div className="mt-4 text-base text-gray-800 font-medium">
+            Menampilkan <span className="font-bold text-gray-900">{filteredBooks.length}</span> dari{" "}
+            <span className="font-bold text-gray-900">{books.length}</span> buku
           </div>
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+              <thead className="bg-gradient-to-r from-gray-100 to-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wider">
                     Judul
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wider">
                     Penulis
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wider">
                     Penerbit
                   </th>
-                  <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wider">
                     Tahun
                   </th>
-                  <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wider">
                     Stok
                   </th>
-                  <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wider">
                     Kategori
                   </th>
-                  <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-center text-sm font-bold text-gray-900 uppercase tracking-wider">
                     Aksi
                   </th>
                 </tr>
@@ -368,10 +368,10 @@ export default function AdminBooks() {
                 {filteredBooks.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="px-6 py-12 text-center">
-                      <div className="text-gray-500">
+                      <div className="text-gray-600">
                         <HiBookOpen className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                        <p className="text-lg font-medium">Tidak ada buku ditemukan</p>
-                        <p className="text-sm">Coba ubah filter atau kata kunci pencarian</p>
+                        <p className="text-lg font-bold">Tidak ada buku ditemukan</p>
+                        <p className="text-base font-medium">Coba ubah filter atau kata kunci pencarian</p>
                       </div>
                     </td>
                   </tr>
@@ -379,24 +379,24 @@ export default function AdminBooks() {
                   filteredBooks.map((book) => (
                     <tr key={book.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-gray-900">{book.title}</div>
+                        <div className="font-bold text-gray-900 text-base">{book.title}</div>
                       </td>
-                      <td className="px-6 py-4 text-gray-600">{book.author || "-"}</td>
-                      <td className="px-6 py-4 text-gray-600">{book.publisher || "-"}</td>
-                      <td className="px-6 py-4 text-center text-gray-600">{book.year || "-"}</td>
+                      <td className="px-6 py-4 text-gray-800 font-medium text-base">{book.author || "-"}</td>
+                      <td className="px-6 py-4 text-gray-800 font-medium text-base">{book.publisher || "-"}</td>
+                      <td className="px-6 py-4 text-center text-gray-800 font-medium text-base">{book.year || "-"}</td>
                       <td className="px-6 py-4 text-center">
                         <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold border-2 ${
                             book.stock > 0
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
+                              ? "bg-green-100 text-green-900 border-green-300"
+                              : "bg-red-100 text-red-900 border-red-300"
                           }`}
                         >
                           {book.stock}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getCategoryColor(book.category)}`}>
+                        <span className={`inline-flex px-3 py-1 rounded-full text-sm font-bold ${getCategoryColor(book.category)}`}>
                           {convertCategory(book.category)}
                         </span>
                       </td>
@@ -404,7 +404,7 @@ export default function AdminBooks() {
                         <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => handleStartEdit(book)}
-                            className="flex items-center gap-1 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm font-medium"
+                            className="flex items-center gap-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-bold shadow-md"
                           >
                             <HiPencil className="w-4 h-4" />
                             Edit
@@ -412,7 +412,7 @@ export default function AdminBooks() {
 
                           <button
                             onClick={() => handleDelete(book.id)}
-                            className="flex items-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-sm font-medium"
+                            className="flex items-center gap-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-bold shadow-md"
                           >
                             <HiTrash className="w-4 h-4" />
                             Hapus

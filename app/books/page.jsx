@@ -172,7 +172,7 @@ export default function BooksPage() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Koleksi Buku</h1>
-                <p className="text-gray-600">Temukan buku favorit Anda</p>
+                <p className="text-gray-700 font-medium">Temukan buku favorit Anda</p>
               </div>
             </div>
 
@@ -180,23 +180,23 @@ export default function BooksPage() {
             <div className="flex flex-col md:flex-row gap-4">
               {/* Search Bar */}
               <div className="flex-1 relative">
-                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
                   type="text"
                   placeholder="Cari judul atau penulis..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg-white shadow-sm"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg-white shadow-sm text-gray-900 font-medium"
                 />
               </div>
 
               {/* Category Filter */}
               <div className="relative md:w-64">
-                <FaFilter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FaFilter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent appearance-none cursor-pointer bg-white shadow-sm"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent appearance-none cursor-pointer bg-white shadow-sm text-gray-900 font-medium"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
@@ -208,8 +208,8 @@ export default function BooksPage() {
             </div>
 
             {/* Results count */}
-            <div className="mt-4 text-sm text-gray-600">
-              Menampilkan <span className="font-semibold text-gray-900">{filteredBooks.length}</span> buku
+            <div className="mt-4 text-base text-gray-800 font-medium">
+              Menampilkan <span className="font-bold text-gray-900">{filteredBooks.length}</span> buku
             </div>
           </div>
         </div>
@@ -218,9 +218,9 @@ export default function BooksPage() {
         <div className="max-w-7xl mx-auto px-6 py-8">
           {filteredBooks.length === 0 ? (
             <div className="text-center py-20">
-              <div className="text-6xl mb-4">📚</div>
-              <p className="text-xl text-gray-600 font-medium">Tidak ada buku ditemukan</p>
-              <p className="text-gray-500 mt-2">Coba ubah filter atau kata kunci pencarian</p>
+              <HiBookOpen className="w-20 h-20 text-gray-400 mx-auto mb-4" />
+              <p className="text-xl text-gray-800 font-bold">Tidak ada buku ditemukan</p>
+              <p className="text-gray-600 font-medium mt-2">Coba ubah filter atau kata kunci pencarian</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -230,7 +230,7 @@ export default function BooksPage() {
                 return (
                   <div
                     key={book.id}
-                    className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col cursor-pointer border border-gray-100 hover:border-amber-200"
+                    className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col cursor-pointer border-2 border-gray-100 hover:border-amber-300"
                   >
                     {/* Card Header - Thumbnail */}
                     <div 
@@ -253,19 +253,19 @@ export default function BooksPage() {
                       </button>
 
                       {/* Book Icon */}
-                      <div className="text-8xl text-amber-400 group-hover:scale-110 transition-transform duration-300">
-                        📘
+                      <div className="group-hover:scale-110 transition-transform duration-300">
+                        <HiBookOpen className="w-24 h-24 text-amber-400" />
                       </div>
 
                       {/* Stock Badge */}
                       <div className="absolute bottom-3 left-3">
                         {book.stock > 0 ? (
-                          <span className="inline-flex items-center gap-1 bg-green-500 text-white px-3 py-1 text-xs rounded-full font-medium shadow-md">
+                          <span className="inline-flex items-center gap-1 bg-green-500 text-white px-3 py-1 text-xs rounded-full font-bold shadow-md border-2 border-green-600">
                             <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
                             Tersedia ({book.stock})
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 bg-red-500 text-white px-3 py-1 text-xs rounded-full font-medium shadow-md">
+                          <span className="inline-flex items-center gap-1 bg-red-500 text-white px-3 py-1 text-xs rounded-full font-bold shadow-md border-2 border-red-600">
                             <span className="w-2 h-2 bg-white rounded-full"></span>
                             Stok Habis
                           </span>
@@ -279,7 +279,7 @@ export default function BooksPage() {
                       className="p-5 flex flex-col flex-1"
                     >
                       {/* Category Badge */}
-                      <span className="inline-block w-fit px-3 py-1 bg-amber-100 text-amber-700 text-xs rounded-full font-semibold mb-3">
+                      <span className="inline-block w-fit px-3 py-1 bg-amber-100 text-amber-800 text-xs rounded-full font-bold mb-3 border border-amber-200">
                         {book.category}
                       </span>
 
@@ -289,10 +289,10 @@ export default function BooksPage() {
                       </h3>
 
                       {/* Author */}
-                      <p className="text-sm text-gray-600 mb-1">oleh {book.author}</p>
+                      <p className="text-sm text-gray-700 font-medium mb-1">oleh {book.author}</p>
 
                       {/* Publisher & Year */}
-                      <p className="text-xs text-gray-500 mb-4">
+                      <p className="text-xs text-gray-600 font-medium mb-4">
                         {book.publisher} • {book.year}
                       </p>
 
@@ -308,10 +308,10 @@ export default function BooksPage() {
                           }
                         }}
                         disabled={book.stock === 0}
-                        className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+                        className={`w-full py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
                           book.stock > 0
                             ? "bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-md hover:shadow-lg hover:scale-105"
-                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                            : "bg-gray-300 text-gray-600 cursor-not-allowed"
                         }`}
                       >
                         <HiBookOpen className="w-5 h-5" />

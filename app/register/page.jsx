@@ -131,7 +131,7 @@ export default function Register() {
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('/library.jpg')",
+          backgroundImage: "url('/background1.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundAttachment: "fixed"
@@ -287,7 +287,6 @@ export default function Register() {
                 onClick={() => router.push("/")}
                 className="text-gray-500 text-sm hover:text-gray-900 transition-colors inline-flex items-center space-x-1"
               >
-                <span>←</span>
                 <span>Kembali ke Beranda</span>
               </button>
             </div>

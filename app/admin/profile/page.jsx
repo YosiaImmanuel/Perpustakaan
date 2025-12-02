@@ -4,29 +4,28 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
-  HiUser,
-  HiMail,
-  HiLocationMarker,
-  HiShieldCheck,
-  HiPencil,
-  HiCheck,
-  HiX,
-  HiLogout,
-  HiBookOpen,
-  HiClipboardList,
-  HiHeart,
-} from "react-icons/hi";
-import UserSidebar from "@/components/UserSidebar";
+  User,
+  Mail,
+  MapPin,
+  Shield,
+  Edit,
+  Check,
+  X,
+  LogOut,
+  BookOpen,
+  ClipboardList,
+  Clock,
+} from "lucide-react";
 
-export default function ProfilePage() {
+export default function AdminProfilePage() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [stats, setStats] = useState({
+    totalBooks: 0,
     totalBorrows: 0,
-    activeBorrows: 0,
-    wishlistCount: 0,
+    pending: 0,
   });
   
   const [formData, setFormData] = useState({
@@ -44,7 +43,7 @@ export default function ProfilePage() {
         const res = await fetch("/api/session");
         const data = await res.json();
 
-        if (!data.user) {
+        if (!data.user || data.user.role !== "admin") {
           router.push("/login");
           return;
         }
@@ -56,23 +55,21 @@ export default function ProfilePage() {
           address: data.user.address || "",
         });
 
-        // Get user stats
-        const [borrowsRes, wishlistRes] = await Promise.all([
-          fetch(`/api/borrows?userId=${data.user.id}`),
-          fetch("/api/wishlist", {
-            headers: { "x-user-id": data.user.id },
-          }),
+        // Get admin stats
+        const [booksRes, borrowsRes] = await Promise.all([
+          fetch("/api/books"),
+          fetch("/api/borrows"),
         ]);
 
+        const books = await booksRes.json();
         const borrows = await borrowsRes.json();
-        const wishlist = await wishlistRes.json();
 
         setStats({
-          totalBorrows: borrows.length,
-          activeBorrows: borrows.filter(
-            (b) => b.status === "approved" || b.status === "pending"
-          ).length,
-          wishlistCount: Array.isArray(wishlist) ? wishlist.length : 0,
+          totalBooks: Array.isArray(books) ? books.length : 0,
+          totalBorrows: Array.isArray(borrows) ? borrows.length : 0,
+          pending: Array.isArray(borrows) 
+            ? borrows.filter((b) => b.status === "pending").length 
+            : 0,
         });
       } catch (error) {
         console.error("Error loading profile:", error);
@@ -105,13 +102,13 @@ export default function ProfilePage() {
       if (res.ok) {
         setSession({ ...session, name: formData.name, address: formData.address });
         setIsEditing(false);
-        alert("✅ Profile berhasil diperbarui!");
+        alert("Profile berhasil diperbarui!");
       } else {
-        alert("❌ Gagal memperbarui profile");
+        alert("Gagal memperbarui profile");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("❌ Terjadi kesalahan");
+      alert("Terjadi kesalahan");
     } finally {
       setIsSaving(false);
     }
@@ -134,13 +131,10 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <UserSidebar />
-        <div className="lg:ml-16 flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
-            <p className="text-gray-700 text-lg font-semibold">Memuat profile...</p>
-          </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg font-medium">Memuat profile...</p>
         </div>
       </div>
     );
@@ -149,38 +143,33 @@ export default function ProfilePage() {
   const initials =
     session?.name?.charAt(0).toUpperCase() ||
     session?.email?.charAt(0).toUpperCase() ||
-    "U";
+    "A";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      <UserSidebar />
-
-      {/* Main Content */}
-      <div className="lg:ml-16 transition-all duration-300">
-        
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="max-w-5xl mx-auto px-6 py-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-lg">
-                <HiUser className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Profile Saya</h1>
-                <p className="text-gray-700 font-medium">Kelola informasi akun Anda</p>
-              </div>
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="px-6 py-6">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-lg">
+              <User className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Profile Admin</h1>
+              <p className="text-gray-600">Kelola informasi akun administrator</p>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Content */}
-        <div className="max-w-5xl mx-auto px-6 py-8 min-h-[calc(100vh-120px)] flex items-center">
-          
-          <div className="grid lg:grid-cols-3 gap-6 w-full">
+      {/* Content */}
+      <div className="px-6 py-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-3 gap-6">
             
             {/* Left Column - Profile Card */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 text-center">
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 text-center">
                 {/* Avatar */}
                 <div className="mb-4">
                   <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-4xl font-bold mx-auto shadow-lg">
@@ -190,49 +179,54 @@ export default function ProfilePage() {
 
                 {/* Name & Email */}
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                  {session?.name || "User"}
+                  {session?.name || "Admin"}
                 </h2>
-                <p className="text-gray-700 font-medium text-sm mb-4">{session?.email}</p>
+                <p className="text-gray-600 text-sm mb-4">{session?.email}</p>
 
                 {/* Role Badge */}
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-800 rounded-full font-bold text-sm mb-6 border border-amber-200">
-                  <HiShieldCheck className="w-4 h-4" />
-                  {session?.role === "admin" ? "Administrator" : "User"}
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-800 rounded-full font-semibold text-sm mb-6">
+                  <Shield className="w-4 h-4" />
+                  Administrator
                 </div>
 
                 {/* Stats */}
                 <div className="space-y-3 mb-6">
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <HiClipboardList className="w-5 h-5 text-amber-600" />
-                      <span className="text-sm text-gray-700 font-medium">Total Peminjaman</span>
+                      <BookOpen className="w-5 h-5 text-green-600" />
+                      <span className="text-sm text-gray-600">Total Buku</span>
                     </div>
-                    <span className="font-bold text-gray-900 text-lg">{stats.totalBorrows}</span>
+                    <span className="font-bold text-gray-900">{stats.totalBooks}</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <HiBookOpen className="w-5 h-5 text-green-600" />
-                      <span className="text-sm text-gray-700 font-medium">Sedang Dipinjam</span>
+                      <ClipboardList className="w-5 h-5 text-amber-600" />
+                      <span className="text-sm text-gray-600">Total Peminjaman</span>
                     </div>
-                    <span className="font-bold text-gray-900 text-lg">{stats.activeBorrows}</span>
+                    <span className="font-bold text-gray-900">{stats.totalBorrows}</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <HiHeart className="w-5 h-5 text-pink-600" />
-                      <span className="text-sm text-gray-700 font-medium">Wishlist</span>
+                      <Clock className="w-5 h-5 text-yellow-600" />
+                      <span className="text-sm text-gray-600">Menunggu Approval</span>
                     </div>
-                    <span className="font-bold text-gray-900 text-lg">{stats.wishlistCount}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-gray-900">{stats.pending}</span>
+                      {stats.pending > 0 && (
+                        <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Logout Button */}
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all shadow-md"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-all"
                 >
-                  <HiLogout className="w-5 h-5" />
+                  <LogOut className="w-5 h-5" />
                   Keluar
                 </button>
               </div>
@@ -240,16 +234,16 @@ export default function ProfilePage() {
 
             {/* Right Column - Profile Info */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6">
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900">Informasi Profile</h2>
                   
                   {!isEditing && (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg transition-colors shadow-md"
+                      className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors"
                     >
-                      <HiPencil className="w-4 h-4" />
+                      <Edit className="w-4 h-4" />
                       Edit Profile
                     </button>
                   )}
@@ -258,8 +252,8 @@ export default function ProfilePage() {
                 <div className="space-y-6">
                   {/* Name Field */}
                   <div>
-                    <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-2">
-                      <HiUser className="w-4 h-4 text-amber-600" />
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                      <User className="w-4 h-4 text-amber-600" />
                       Nama Lengkap
                     </label>
                     {isEditing ? (
@@ -269,12 +263,12 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setFormData({ ...formData, name: e.target.value })
                         }
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 font-medium"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                         placeholder="Masukkan nama lengkap"
                       />
                     ) : (
-                      <div className="px-4 py-3 bg-gray-50 rounded-xl border-2 border-gray-200">
-                        <p className="text-gray-900 font-bold">
+                      <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <p className="text-gray-900 font-medium">
                           {session?.name || "-"}
                         </p>
                       </div>
@@ -283,13 +277,13 @@ export default function ProfilePage() {
 
                   {/* Email Field (Read Only) */}
                   <div>
-                    <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-2">
-                      <HiMail className="w-4 h-4 text-amber-600" />
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                      <Mail className="w-4 h-4 text-amber-600" />
                       Email
                     </label>
-                    <div className="px-4 py-3 bg-gray-100 rounded-xl border-2 border-gray-200">
-                      <p className="text-gray-700 font-medium">{session?.email}</p>
-                      <p className="text-xs text-gray-600 font-medium mt-1">
+                    <div className="px-4 py-3 bg-gray-100 rounded-xl border border-gray-200">
+                      <p className="text-gray-600">{session?.email}</p>
+                      <p className="text-xs text-gray-500 mt-1">
                         Email tidak dapat diubah
                       </p>
                     </div>
@@ -297,8 +291,8 @@ export default function ProfilePage() {
 
                   {/* Address Field */}
                   <div>
-                    <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-2">
-                      <HiLocationMarker className="w-4 h-4 text-amber-600" />
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                      <MapPin className="w-4 h-4 text-amber-600" />
                       Alamat
                     </label>
                     {isEditing ? (
@@ -308,12 +302,12 @@ export default function ProfilePage() {
                           setFormData({ ...formData, address: e.target.value })
                         }
                         rows={3}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none text-gray-900 font-medium"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none"
                         placeholder="Masukkan alamat lengkap"
                       />
                     ) : (
-                      <div className="px-4 py-3 bg-gray-50 rounded-xl border-2 border-gray-200">
-                        <p className="text-gray-900 font-medium">
+                      <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <p className="text-gray-900">
                           {session?.address || "Alamat belum diisi"}
                         </p>
                       </div>
@@ -326,9 +320,9 @@ export default function ProfilePage() {
                       <button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
+                        className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
                           isSaving
-                            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                             : "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white shadow-md hover:shadow-lg"
                         }`}
                       >
@@ -339,7 +333,7 @@ export default function ProfilePage() {
                           </>
                         ) : (
                           <>
-                            <HiCheck className="w-5 h-5" />
+                            <Check className="w-5 h-5" />
                             Simpan Perubahan
                           </>
                         )}
@@ -348,9 +342,9 @@ export default function ProfilePage() {
                       <button
                         onClick={handleCancel}
                         disabled={isSaving}
-                        className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-900 font-bold rounded-xl transition-all"
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl transition-all"
                       >
-                        <HiX className="w-5 h-5" />
+                        <X className="w-5 h-5" />
                         Batal
                       </button>
                     </div>
@@ -359,28 +353,19 @@ export default function ProfilePage() {
               </div>
 
               {/* Additional Info Card */}
-              <div className="mt-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border-2 border-amber-200 p-6">
-                <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2 text-base">
-                  <HiShieldCheck className="w-5 h-5 text-amber-600" />
-                  Informasi Akun
+              <div className="mt-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-6">
+                <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-amber-600" />
+                  Informasi Akun Administrator
                 </h3>
-                <div className="space-y-2 text-sm text-gray-800 font-medium">
+                <div className="space-y-2 text-sm text-gray-700">
                   <p>
-                    <span className="font-bold">Status Akun:</span>{" "}
-                    <span className="text-green-600 font-bold">Aktif</span>
+                    <span className="font-medium">Status Akun:</span>{" "}
+                    <span className="text-green-600 font-semibold">Aktif</span>
                   </p>
                   <p>
-                    <span className="font-bold">Bergabung sejak:</span>{" "}
-                    <span className="font-bold text-gray-900">
-                      {new Date(session?.created_at || Date.now()).toLocaleDateString(
-                        "id-ID",
-                        {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        }
-                      )}
-                    </span>
+                    <span className="font-medium">Level Akses:</span>{" "}
+                    <span className="text-amber-600 font-semibold">Full Access</span>
                   </p>
                 </div>
               </div>

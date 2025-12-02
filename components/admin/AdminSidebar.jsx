@@ -18,6 +18,7 @@ import {
 export default function AdminSidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
   
   const router = useRouter();
   const pathname = usePathname();
@@ -27,8 +28,45 @@ export default function AdminSidebar() {
   const menu = [
     { name: "Dashboard", path: "/admin/dashboard", icon: HiViewGrid },
     { name: "Kelola Buku", path: "/admin/books", icon: HiBookOpen },
-    { name: "Riwayat Peminjaman", path: "/admin/history", icon: HiClipboardList },
+    { 
+      name: "Riwayat Peminjaman", 
+      path: "/admin/history", 
+      icon: HiClipboardList,
+      badge: pendingCount
+    },
   ];
+
+  /* ===========================================================
+     Fetch jumlah peminjaman pending
+     =========================================================== */
+  const fetchPendingCount = async () => {
+    try {
+      const res = await fetch("/api/borrows");
+      if (res.ok) {
+        const data = await res.json();
+        const borrows = Array.isArray(data) ? data : [];
+        const pending = borrows.filter(b => b.status === "pending").length;
+        setPendingCount(pending);
+      }
+    } catch (err) {
+      console.error("Error fetching pending count:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPendingCount();
+    
+    // Poll setiap 30 detik untuk update real-time
+    const interval = setInterval(fetchPendingCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Refresh count ketika route berubah (misal setelah approve/reject)
+  useEffect(() => {
+    if (pathname === "/admin/history") {
+      fetchPendingCount();
+    }
+  }, [pathname]);
 
   /* ===========================================================
      Close dropdown jika klik di luar
@@ -95,7 +133,7 @@ export default function AdminSidebar() {
                   onClick={() => router.push(item.path)}
                   className={`
                     flex items-center w-full p-3 rounded-lg
-                    transition-all duration-200
+                    transition-all duration-200 relative
                     ${!isExpanded && "justify-center"}
                     ${
                       active
@@ -108,6 +146,21 @@ export default function AdminSidebar() {
                   <IconComponent className="w-5 h-5 flex-shrink-0" />
                   {isExpanded && (
                     <span className="ml-3 font-medium">{item.name}</span>
+                  )}
+                  
+                  {/* Badge Counter */}
+                  {item.badge > 0 && (
+                    <span 
+                      className={`
+                        flex items-center justify-center
+                        min-w-[20px] h-5 px-1.5
+                        bg-red-500 text-white text-xs font-bold rounded-full
+                        ${isExpanded ? 'ml-auto' : 'absolute -top-1 -right-1'}
+                        animate-pulse
+                      `}
+                    >
+                      {item.badge > 99 ? '99+' : item.badge}
+                    </span>
                   )}
                 </button>
               );

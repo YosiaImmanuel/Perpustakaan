@@ -263,8 +263,8 @@ export default function UserHistoryPage() {
                       <div className="flex-1">
                         <div className="flex items-start gap-4">
                           {/* Book Icon */}
-                          <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl flex items-center justify-center text-3xl">
-                            📖
+                          <div className=" w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl flex items-center justify-center text-3xl">
+                            <HiBookOpen className="w-10 h-10 text-amber-400" />
                           </div>
 
                           {/* Book Details */}

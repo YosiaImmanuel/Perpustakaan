@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   HiClipboardList,
   HiCheckCircle,
@@ -16,6 +17,7 @@ export default function AdminHistory() {
   const [borrows, setBorrows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const router = useRouter();
 
   const fetchBorrows = async () => {
     setLoading(true);
@@ -32,6 +34,10 @@ export default function AdminHistory() {
 
   useEffect(() => {
     fetchBorrows();
+    
+    // Auto refresh setiap 30 detik untuk cek peminjaman baru
+    const interval = setInterval(fetchBorrows, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleStatus = async (borrowId, status) => {
@@ -55,7 +61,13 @@ export default function AdminHistory() {
       }
 
       alert(status === "approved" ? "✅ Peminjaman berhasil disetujui" : "❌ Peminjaman ditolak");
-      fetchBorrows();
+      
+      // Refresh data
+      await fetchBorrows();
+      
+      // Trigger refresh pada sidebar dengan router refresh
+      router.refresh();
+      
     } catch (err) {
       console.error(err);
       alert("Terjadi kesalahan");
@@ -182,7 +194,7 @@ export default function AdminHistory() {
         
         {/* Stats Alert for Pending */}
         {statusCounts.pending > 0 && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-center gap-3 animate-pulse">
             <HiClock className="w-6 h-6 text-yellow-600" />
             <div>
               <p className="font-semibold text-yellow-900">
@@ -268,14 +280,14 @@ export default function AdminHistory() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleStatus(borrow.id, "approved")}
-                              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium"
+                              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium shadow-md hover:shadow-lg"
                             >
                               <HiCheckCircle className="w-4 h-4" />
                               Setujui
                             </button>
                             <button
                               onClick={() => handleStatus(borrow.id, "rejected")}
-                              className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium"
+                              className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium shadow-md hover:shadow-lg"
                             >
                               <HiXCircle className="w-4 h-4" />
                               Tolak

@@ -106,7 +106,7 @@ export default function BorrowBookPage() {
         <UserSidebar />
         <div className="text-center lg:ml-16">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg font-medium">Memuat data...</p>
+          <p className="text-gray-700 text-lg font-semibold">Memuat data...</p>
         </div>
       </div>
     );
@@ -117,10 +117,10 @@ export default function BorrowBookPage() {
       <UserSidebar />
 
       {/* Main Content */}
-      <div className="lg:ml-16 transition-all duration-300">
+      <div className="lg:ml-16 transition-all duration-300 min-h-screen flex items-center py-8">
 
         {/* Form Container */}
-        <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-6 w-full">
           
           {/* Page Title */}
           <div className="text-center mb-10">
@@ -130,17 +130,17 @@ export default function BorrowBookPage() {
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
               Pengajuan Peminjaman Buku
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-700 font-medium">
               Periksa data di bawah ini sebelum mengajukan peminjaman
             </p>
           </div>
 
           {/* Main Card */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-gray-200">
             <div className="grid lg:grid-cols-2 gap-0">
 
               {/* Left Side - User Data */}
-              <div className="p-8 lg:p-10 bg-gradient-to-br from-amber-50 to-orange-50 border-r border-gray-200">
+              <div className="p-8 lg:p-10 bg-gradient-to-br from-amber-50 to-orange-50 border-r-2 border-gray-200">
                 <div className="flex items-center gap-3 mb-8">
                   <div className="p-3 bg-white rounded-xl shadow-md">
                     <HiUserCircle className="w-6 h-6 text-amber-600" />
@@ -153,48 +153,48 @@ export default function BorrowBookPage() {
                 <div className="space-y-4">
                   
                   {/* Name */}
-                  <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-start gap-4 p-4 bg-white rounded-xl border-2 border-gray-200 shadow-sm">
                     <div className="p-2 bg-amber-100 rounded-lg">
                       <HiUser className="w-5 h-5 text-amber-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500 font-medium mb-1">Nama Lengkap</p>
-                      <p className="text-gray-900 font-semibold">{user.name}</p>
+                      <p className="text-xs text-gray-600 font-bold mb-1">Nama Lengkap</p>
+                      <p className="text-gray-900 font-bold">{user.name}</p>
                     </div>
                   </div>
 
                   {/* Email */}
-                  <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-start gap-4 p-4 bg-white rounded-xl border-2 border-gray-200 shadow-sm">
                     <div className="p-2 bg-amber-100 rounded-lg">
                       <HiMail className="w-5 h-5 text-amber-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500 font-medium mb-1">Email</p>
-                      <p className="text-gray-900 font-semibold break-all">{user.email}</p>
+                      <p className="text-xs text-gray-600 font-bold mb-1">Email</p>
+                      <p className="text-gray-900 font-bold break-all">{user.email}</p>
                     </div>
                   </div>
 
                   {/* Address */}
-                  <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-start gap-4 p-4 bg-white rounded-xl border-2 border-gray-200 shadow-sm">
                     <div className="p-2 bg-amber-100 rounded-lg">
                       <HiLocationMarker className="w-5 h-5 text-amber-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500 font-medium mb-1">Alamat</p>
-                      <p className="text-gray-900 font-semibold">
+                      <p className="text-xs text-gray-600 font-bold mb-1">Alamat</p>
+                      <p className="text-gray-900 font-bold">
                         {user.address || "Belum diisi"}
                       </p>
                     </div>
                   </div>
 
                   {/* Date */}
-                  <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-start gap-4 p-4 bg-white rounded-xl border-2 border-gray-200 shadow-sm">
                     <div className="p-2 bg-amber-100 rounded-lg">
                       <HiCalendar className="w-5 h-5 text-amber-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500 font-medium mb-1">Tanggal Pengajuan</p>
-                      <p className="text-gray-900 font-semibold">
+                      <p className="text-xs text-gray-600 font-bold mb-1">Tanggal Pengajuan</p>
+                      <p className="text-gray-900 font-bold">
                         {new Date().toLocaleDateString("id-ID", {
                           weekday: "long",
                           year: "numeric",
@@ -208,11 +208,11 @@ export default function BorrowBookPage() {
                 </div>
 
                 {/* Info Box */}
-                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-3">
+                <div className="mt-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl flex items-start gap-3">
                   <HiExclamationCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-blue-800">
-                    <p className="font-semibold mb-1">Informasi Penting:</p>
-                    <p>Pastikan data Anda sudah benar. Pengajuan akan diproses oleh admin dalam 1-2 hari kerja.</p>
+                  <div className="text-sm text-blue-900">
+                    <p className="font-bold mb-1">Informasi Penting:</p>
+                    <p className="font-medium">Pastikan data Anda sudah benar. Pengajuan akan diproses oleh admin dalam 1-2 hari kerja.</p>
                   </div>
                 </div>
               </div>
@@ -229,14 +229,16 @@ export default function BorrowBookPage() {
                 </div>
 
                 {/* Book Preview Card */}
-                <div className="mb-8 p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-200">
+                <div className="mb-8 p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="text-5xl">📚</div>
+                    <div className="p-3 bg-white rounded-xl shadow-md">
+                      <HiBookOpen className="w-12 h-12 text-amber-500" />
+                    </div>
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 mb-1">
                         {book.title}
                       </h3>
-                      <p className="text-sm text-gray-600">Buku yang akan dipinjam</p>
+                      <p className="text-sm text-gray-700 font-medium">Buku yang akan dipinjam</p>
                     </div>
                   </div>
                 </div>
@@ -244,35 +246,35 @@ export default function BorrowBookPage() {
                 <div className="space-y-4 mb-8">
                   
                   {/* Author */}
-                  <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
                     <div className="p-2 bg-white rounded-lg">
                       <HiUser className="w-5 h-5 text-amber-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500 font-medium mb-1">Penulis</p>
-                      <p className="text-gray-900 font-semibold">{book.author}</p>
+                      <p className="text-xs text-gray-600 font-bold mb-1">Penulis</p>
+                      <p className="text-gray-900 font-bold">{book.author}</p>
                     </div>
                   </div>
 
                   {/* Publisher */}
-                  <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
                     <div className="p-2 bg-white rounded-lg">
                       <HiOfficeBuilding className="w-5 h-5 text-amber-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500 font-medium mb-1">Penerbit</p>
-                      <p className="text-gray-900 font-semibold">{book.publisher}</p>
+                      <p className="text-xs text-gray-600 font-bold mb-1">Penerbit</p>
+                      <p className="text-gray-900 font-bold">{book.publisher}</p>
                     </div>
                   </div>
 
                   {/* Year */}
-                  <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
                     <div className="p-2 bg-white rounded-lg">
                       <HiCalendar className="w-5 h-5 text-amber-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500 font-medium mb-1">Tahun Terbit</p>
-                      <p className="text-gray-900 font-semibold">{book.year}</p>
+                      <p className="text-xs text-gray-600 font-bold mb-1">Tahun Terbit</p>
+                      <p className="text-gray-900 font-bold">{book.year}</p>
                     </div>
                   </div>
 
@@ -305,7 +307,7 @@ export default function BorrowBookPage() {
                   <button
                     onClick={() => router.back()}
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-3 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-bold transition-all"
+                    className="w-full flex items-center justify-center gap-3 py-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-xl font-bold transition-all"
                   >
                     <HiArrowLeft className="w-5 h-5" />
                     Kembali
